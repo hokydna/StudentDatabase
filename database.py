@@ -140,6 +140,70 @@ def list_units():
 #     cur.close()                     # Close the cursor
 #     conn.close()                    # Close the connection to the db
 #     return val
+def classrooms():
+    conn = database_connect()
+    if(conn is None):
+        return None
+    # Sets up the rows as a dictionary
+    cur = conn.cursor()
+    val = None
+    try:
+        # Try getting all the information returned from the query
+        # NOTE: column ordering is IMPORTANT
+        cur.execute("""SELECT * FROM unidb.classroom ORDER BY classroomid
+    ASC """)
+        val = cur.fetchall()
+    except:
+    # If there were any errors, we print something nice and return a NULL value
+        print("Error fetching from database")
+        cur.close() # Close the cursor
+        conn.close() # Close the connection to the db
+    return val
+
+def classroom_search(num_seats):
+    conn = database_connect()
+    if(conn is None):
+        return None
+    # Sets up the rows as a dictionary
+    cur = conn.cursor()
+    val = None
+    try:   
+        # Try getting all the information returned from the query
+        # NOTE: column ordering is IMPORTANT
+        # sql = "SELECT * FROM unidb.classroom WHERE seats >= {0} ORDER BY classroomid ASC".format(num_seats)
+        # print(sql)
+        cur.execute("SELECT * FROM unidb.classroom WHERE seats >= %s ORDER BY classroomid ASC", (num_seats,))
+        val = cur.fetchall()
+    except Exception as e:
+# If there were any errors, we print something nice and return a NULL value
+        print("Error fetching from database")
+        print(e)
+    cur.close() # Close the cursor
+    conn.close() # Close the connection to the db
+    return val
+
+def classroom_types():
+    conn = database_connect()
+    if(conn is None):
+        return None
+    # Sets up the rows as a dictionary
+    cur = conn.cursor()
+    val = None
+    try:
+        # Try getting all the information returned from the query
+        # NOTE: column ordering is IMPORTANT
+        cur.execute("""SELECT type, count(classroomid)
+        FROM unidb.classroom
+        GROUP BY type
+        ORDER BY count(classroomid) desc""")
+        val = cur.fetchall()
+    except:
+    # If there were any errors, we print something nice and return a NULL value
+        print("Error fetching from database")
+
+    cur.close() # Close the cursor
+    conn.close() # Close the connection to the db
+    return val
 
 def requires():
     conn = database_connect()
